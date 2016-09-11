@@ -36,7 +36,21 @@ For example, pascal(0,2)=1,pascal(1,2)=2 and pascal(1,3)=3. pascal(1,4)=4 pascal
   /**
    * Exercise 2
    */
-    def balance(chars: List[Char]): Boolean = ???
+    def balance(chars: List[Char]): Boolean = {
+
+      def loop(c: List[Char], open: Int, close: Int): Boolean = {
+        if (close > open) return false
+        else {
+          if (c.isEmpty) return close == open
+          if (c.head == '(') return loop(c.tail, open + 1, close)
+          if (c.head == ')') return loop(c.tail, open, close + 1)
+          return loop(c.tail, open, close)
+        }
+      }
+
+    loop(chars, 0, 0)
+
+    }
   
   /**
    * Exercise 3
