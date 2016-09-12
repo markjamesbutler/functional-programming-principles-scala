@@ -54,6 +54,22 @@ For example, pascal(0,2)=1,pascal(1,2)=2 and pascal(1,3)=3. pascal(1,4)=4 pascal
   
   /**
    * Exercise 3
+    * *
+    * 1+1+1+1,
+    * 1+1+2,
+    * 2+2.
    */
-    def countChange(money: Int, coins: List[Int]): Int = ???
+    def countChange(money: Int, coins: List[Int]): Int = {
+
+      def loop(m: Int, c: List[Int], ways: Int): Int = {
+        if (c.isEmpty || m == 0) return ways
+        if (m % c.head == 0) return loop(m, c.tail, ways + 1)
+        return loop(m, c.tail, ways) + loop(m - c.head, c.tail, ways)
+      }
+
+      if (coins.isEmpty || money == 0) return 0
+      else {
+        return loop(money, coins, 0)
+      }
+    }
   }
