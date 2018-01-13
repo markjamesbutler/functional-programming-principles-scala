@@ -121,8 +121,17 @@ class FunSetSuite extends FunSuite {
     new TestSets {
       val s = diff(s1, s2)
       assert(contains(s, 1), "Diff 1")
+      assert(!contains(s, 2), "filter 1")
     }
   }
 
+  test("filter contains subset of set") {
+    new TestSets {
+      val s5 = intersect(s1, s2)
+      val s = filter(s5, _ == 1)
+      assert(contains(s, 1), "filter 1")
+      assert(!contains(s, 2), "filter 1")
+    }
+  }
 
 }
