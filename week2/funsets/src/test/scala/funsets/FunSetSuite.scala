@@ -77,6 +77,7 @@ class FunSetSuite extends FunSuite {
     val s1 = singletonSet(1)
     val s2 = singletonSet(2)
     val s3 = singletonSet(3)
+    val s1001 = singletonSet(1001)
   }
 
   /**
@@ -127,10 +128,39 @@ class FunSetSuite extends FunSuite {
 
   test("filter contains subset of set") {
     new TestSets {
-      val s5 = intersect(s1, s2)
-      val s = filter(s5, _ == 1)
+      val s5 = union(s1, s2)
+      val s6 = union(s5, s1001)
+      val s = filter(s6, _ < 3)
       assert(contains(s, 1), "filter 1")
-      assert(!contains(s, 2), "filter 1")
+      assert(contains(s, 2), "filter 2")
+    }
+  }
+
+  test("forall holds true") {
+    new TestSets {
+      val s5 = union(s1, s2)
+      printSet(s5)
+      val s = forall(s5, _ < 3)
+      assert(s, "forall 1")
+    }
+  }
+
+
+  test("forall holds true out of bounds") {
+    new TestSets {
+      val s5 = union(s1, s1001)
+      printSet(s5)
+      val s = forall(s5, _ < 3)
+      assert(s, "forall 1")
+    }
+  }
+
+  test("exists holds true") {
+    new TestSets {
+      val s5 = union(s1, s2)
+      printSet(s5)
+      val s = exists(s5, _ < 3)
+      assert(s, "exists 1")
     }
   }
 
