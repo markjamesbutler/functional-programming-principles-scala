@@ -241,16 +241,23 @@ object GoogleVsApple {
    */
 
   lazy val googleTweets: TweetSet = {
-  
+    TweetReader.allTweets.filter(t => {
+      google.exists(t.text.contains(_))
+    }
+    )
   }
 
-  lazy val appleTweets: TweetSet = ???
+  lazy val appleTweets: TweetSet = {
+    TweetReader.allTweets.filter(t => {
+      apple.exists(t.text.contains(_))
+    })
+  }
 
   /**
    * A list of all tweets mentioning a keyword from either apple or google,
    * sorted by the number of retweets.
    */
-     lazy val trending: TweetList = ???
+     lazy val trending: TweetList = (appleTweets union googleTweets).descendingByRetweet
   }
 
 object Main extends App {
