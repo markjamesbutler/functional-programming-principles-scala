@@ -34,6 +34,10 @@ class Tweet(val user: String, val text: String, val retweets: Int) {
  */
 abstract class TweetSet {
 
+  def print() = {
+    foreach(println(_))
+  }
+
   /**
    * This method takes a predicate and returns a subset of all the elements
    * in the original set for which the predicate is true.
@@ -54,7 +58,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-    def union(that: TweetSet): TweetSet = ???
+    def union(that: TweetSet): TweetSet
   
   /**
    * Returns the tweet from this set which has the greatest retweet count.
@@ -65,7 +69,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-    def mostRetweeted: Tweet = ???
+    def mostRetweeted: Tweet
   
   /**
    * Returns a list containing all tweets of this set, sorted by retweet count
@@ -76,7 +80,7 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-    def descendingByRetweet: TweetList = ???
+    def descendingByRetweet: TweetList
   
   /**
    * The following methods are already implemented
@@ -104,6 +108,9 @@ abstract class TweetSet {
    * This method takes a function and applies it to every element in the set.
    */
   def foreach(f: Tweet => Unit): Unit
+
+  def isEmpty: Boolean
+
 }
 
 class Empty extends TweetSet {
@@ -120,15 +127,50 @@ class Empty extends TweetSet {
   def remove(tweet: Tweet): TweetSet = this
 
   def foreach(f: Tweet => Unit): Unit = ()
+
+  def union(that: TweetSet): TweetSet = that
+
+  def mostRetweeted: Tweet = throw new java.util.NoSuchElementException("Nil.Empty")
+
+  def descendingByRetweet: TweetList = Nil
+
+  def isEmpty: Boolean = true
 }
 
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
 
-    def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
-      println("Elem: " + elem)
+  def isEmpty: Boolean = false
+
+  /**
+   * This method reflects a common pattern when transforming data structures.
+   * While traversing one data structure (in this case, a TweetSet),
+   * we’re building a second data structure (here, an instance of class TweetList).
+   * The idea is to start with the empty list Nil (containing no tweets), and to
+   * find the tweet with the most retweets in the input TweetSet. This tweet is
+   * removed from the TweetSet (that is, we obtain a new TweetSet that has all the
+   * tweets of the original set except for the tweet that was “removed”; this immutable
+   * set operation, remove, is already implemented for you), and added to the result list
+   * by creating a new Cons. After that, the process repeats itself, but now we are
+   * searching through a TweetSet with one less tweet.
+   */
+  def descendingByRetweet: TweetList = new Cons(mostRetweeted, remove(mostRetweeted).descendingByRetweet)
+
+  def mostRetweeted: Tweet = {
+    if (left.isEmpty && right.isEmpty) elem
+    else if (left.isEmpty) mostRetweeted(elem, right.mostRetweeted)
+    else mostRetweeted(elem, left.mostRetweeted)
+  }
+
+  def mostRetweeted(t: Tweet, t1: Tweet): Tweet =
+   if (t.retweets > t1.retweets) t
+   else t1
+
+  def union(that: TweetSet): TweetSet =
+      (right union that) incl(elem)
+
+  def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet =
       if (p(elem)) right.filterAcc(p, acc.incl(elem))
       else acc
-    }
 
   /**
    * The following methods are already implemented
@@ -155,6 +197,9 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
     left.foreach(f)
     right.foreach(f)
   }
+
+
+
 }
 
 trait TweetList {
@@ -183,9 +228,24 @@ object GoogleVsApple {
   val google = List("android", "Android", "galaxy", "Galaxy", "nexus", "Nexus")
   val apple = List("ios", "iOS", "iphone", "iPhone", "ipad", "iPad")
 
-    lazy val googleTweets: TweetSet = ???
-  lazy val appleTweets: TweetSet = ???
+  /**
+   * As a first step, use the functionality you implemented in the first parts of this assignment
+   * to create two different TweetSets, googleTweets andappleTweets.
+   * The first TweetSet, googleTweets, should contain all tweets that mention
+   * (in their “text”) one of the keywords in the google list. The second TweetSet,
+   * appleTweets, should contain all tweets that mention one of the keyword in the apple list.
+   * Their signature is as follows:
+   *
+   * Hint: use the exists method of List and contains method of classjava.lang.String.
+   *
+   */
+
+  lazy val googleTweets: TweetSet = {
   
+  }
+
+  lazy val appleTweets: TweetSet = ???
+
   /**
    * A list of all tweets mentioning a keyword from either apple or google,
    * sorted by the number of retweets.
