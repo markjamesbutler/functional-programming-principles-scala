@@ -24,12 +24,12 @@ object Huffman {
 
 
   // Part 1: Basics
-    def weight(tree: CodeTree): Int = tree match {
+  def weight(tree: CodeTree): Int = tree match {
     case Fork(_, _, _, w) => w
     case Leaf(_, w) => w
   }
 
-    def chars(tree: CodeTree): List[Char] = tree match {
+  def chars(tree: CodeTree): List[Char] = tree match {
       case Fork(_, _, chars, _) => chars
       case Leaf(char, w) => List(char)
     }
@@ -225,8 +225,6 @@ Decoding also starts at the root of the tree. Given a sequence of bits to decode
           case _ => {
             if (b2.isEmpty) list
             else {
-
-
             val t = b2.head match {
               case 0 => t2 match {
                 case Fork(left, _, _, _) => decodeInner(list, left, b2.tail)
@@ -275,37 +273,29 @@ Decoding also starts at the root of the tree. Given a sequence of bits to decode
     For a given Huffman tree, one can obtain the encoded
     representation of a character by traversing from the
     root of the tree to the leaf containing the character.
+
   Along the way, when a left branch is chosen, a 0 is added to the representation,
   and when a right branch is chosen, 1 is added to the representation.
-  Thus, for the Huffman tree above, the character D is encoded as 1011.
+  Thus, for the Huffman tree above, the character D is encoded as 1011.   *
 
-
-   scala.MatchError: Fork(Leaf(a,2),Leaf(b,3),List(a, b),5) (of class patmat.Huffman$Fork)
-
-scala.MatchError:
-  Fork(Leaf(e,225947),Fork(Leaf(i,115465),Leaf(a,117110),List(i, a),232575),List(e, i, a),458522) (of class patmat.Huffman$Fork)
-   *
+   t2 List(a, b)
+  t2 List(a, b)
+  t2 List(b)
+  t2 List()
+  [info] HuffmanSuite:
+   
    */
     def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
 
-      def encodeInner(tr: CodeTree, text: List[Char], list: List[Bit]): List[Bit] = {
-        if (text.isEmpty) list
-        else {
-          val h = text.head
-          tr match {
-            case Fork(left: Fork, right: Fork, chars, weight) if (left.chars.contains(h)) => encodeInner(left, text, 0 :: list)
-            case Fork(left: Fork, right: Fork, chars, weight) if (right.chars.contains(h)) => encodeInner(right, text, 1 :: list)
-            case Fork(left: Fork, right: Leaf, chars, weight) if (left.chars.contains(h)) => encodeInner(left, text, 0 :: list)
-            case Fork(left: Fork, right: Leaf, chars, weight) if (right.char == h) => encodeInner(right, text, 1 :: list)
-            case Fork(left: Leaf, right: Fork, chars, weight) if (left.char == h) => encodeInner(left, text, 0 :: list)
-            case Fork(left: Leaf, right: Fork, chars, weight) if (right.chars.contains(h)) => encodeInner(right, text, 1 :: list)
-            case Fork(left: Leaf, right: Leaf, chars, weight) if (left.char == h) => encodeInner(left, text, 0 :: list)
-            case Fork(left: Leaf, right: Leaf, chars, weight) if (right.char == h) => encodeInner(right, text, 1 :: list)
-            case Leaf(h, _) => encodeInner(tr, text.tail, list)
-          }
+      def encodeInner(tr: CodeTree, char: Char, list: List[Bit]): List[Bit] = {
+        tr match {
+          case Fork(left, right, _, _) if (chars(left).contains(char)) =>  encodeInner(left, char, list :+ 0)
+          case Fork(left, right, _, _) if (chars(right).contains(char)) => encodeInner(right, char, list :+ 1)
+          case Leaf(_, _) => list
         }
-    }
-    encodeInner(tree, text, List())
+      }
+
+    text.flatMap(c => encodeInner(tree, c, List()))
   }
   
   // Part 4b: Encoding using code table
