@@ -51,11 +51,18 @@ class HuffmanSuite extends FunSuite {
     assert(combine(leaflist) === List(Fork(Leaf('e',1),Leaf('t',2),List('e', 't'),3), Leaf('x',4)))
   }
 
+  //[Observed Error] List('s', 'r', 'd', 't', 's', 'l', 'a', 'e', 'f', 'e', 'i', 'h')
+  // did not equal List('h', 'u', 'f', 'f', 'm', 'a', 'n', 'e', 's', 't', 'c', 'o', 'o', 'l')
+
+  test("decode french") {
+    new TestTrees {
+      assert(decodedSecret === "huffmanestcool".toList)
+    }
+  }
 
   test("decode and encode a very short text should be identity") {
     new TestTrees {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
     }
   }
-
 }
