@@ -1,5 +1,7 @@
 package forcomp
 
+import forcomp.Anagrams.Occurrences
+
 
 object Anagrams {
 
@@ -34,7 +36,14 @@ object Anagrams {
    *
    *  Note: you must use `groupBy` to implement this method!
    */
-  def wordOccurrences(w: Word): Occurrences = ???
+  def wordOccurrences(w: Word): Occurrences = {
+      w.map(_.toLower)
+      .groupBy((char: Char) => char)
+      .mapValues(_.length)
+      .toList
+      .sorted
+  }
+
 
   /** Converts a sentence into its character occurrence list. */
   def sentenceOccurrences(s: Sentence): Occurrences = ???
