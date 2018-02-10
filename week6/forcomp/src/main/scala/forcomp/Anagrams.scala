@@ -106,11 +106,12 @@ object Anagrams {
           ) yield (occurrence._1, x1)).toList
       }
 
-      def combs(a: Occurrences, b: List[Occurrences]) = {
-        b ++ (for (
-          c <- a;
-          d <- b)
-          yield (c :: d))
+      def combs(occs: Occurrences, occsList: List[Occurrences]) = {
+          val comms = for (
+            occ <- occs;
+            occ2 <- occsList)
+          yield (occ :: occ2)
+        occsList ++ comms
       }
 
       // combinations with base case b
@@ -131,14 +132,13 @@ object Anagrams {
   def subtract(x: Occurrences, y: Occurrences): Occurrences = {
 
     //Hint: you can use `foldLeft`, and `-`, `apply` and `updated` operations on `Map`.
-
-    def sub (a: Occurrences, b: (Char, Int)): Occurrences = {
-      val m = a.toMap
+    def sub (occs: Occurrences, occ: (Char, Int)): Occurrences = {
+      val m = occs.toMap
       val r =
         // remove occurance
-        if (b._2 == m(b._1)) m - b._1
+        if (occ._2 == m(occ._1)) m - occ._1
           // subtract occurance
-        else m updated(b._1, m(b._1) - b._2)
+        else m updated(occ._1, m(occ._1) - occ._2)
       r.toList
     }
 
