@@ -98,13 +98,24 @@ object Anagrams {
 
     if (occurrences.isEmpty) List(Nil)
     else {
+      // create range of each occurance
+      val x = occurrences.map { occurrence =>
+        (
+          for (
+            x1 <- 1 until (occurrence._2 + 1)
+          ) yield (occurrence._1, x1)).toList
+      }
 
-      val o = for {
-        occurrence <- occurrences
-      } yield occurrence
+      def combs(a: Occurrences, b: List[Occurrences]) = {
+        b ++ (for (
+          c <- a;
+          d <- b)
+          yield (c :: d))
+      }
 
+      // combinations with base case b
+      x.foldRight(List[Occurrences](Nil))(combs)
     }
-    List(occurrences)
   }
 
   /** Subtracts occurrence list `y` from occurrence list `x`.
@@ -117,7 +128,22 @@ object Anagrams {
    *  Note: the resulting value is an occurrence - meaning it is sorted
    *  and has no zero-entries.
    */
-  def subtract(x: Occurrences, y: Occurrences): Occurrences = ???
+  def subtract(x: Occurrences, y: Occurrences): Occurrences = {
+
+    //Hint: you can use `foldLeft`, and `-`, `apply` and `updated` operations on `Map`.
+
+    def sub (a: Occurrences, b: (Char, Int)): Occurrences = {
+      val m = a.toMap
+      val r =
+        // remove occurance
+        if (b._2 == m(b._1)) m - b._1
+          // subtract occurance
+        else m updated(b._1, m(b._1) - b._2)
+      r.toList
+    }
+
+    y.foldLeft(x)(sub)
+  }
 
   /** Returns a list of all anagram sentences of the given sentence.
    *
